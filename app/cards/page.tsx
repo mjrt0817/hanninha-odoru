@@ -9,7 +9,7 @@ export default function CardsPage() {
         <Link className="topLink" href="/">← トップへ</Link>
         <div className="galleryHeader">
           <div>
-            <div className="small">Ver.0.4 DIGITAL CARD SYSTEM</div>
+            <div className="small">Ver.0.6 DIGITAL CARD SYSTEM</div>
             <h1 className="testTitle">デジタルカード一覧</h1>
             <p className="hint">カード定義＋共通テンプレートで描画します。標準のベクターイラストに加え、PNG / WebP / JPG / SVG画像へカード単位で差し替えできます。</p>
           </div>

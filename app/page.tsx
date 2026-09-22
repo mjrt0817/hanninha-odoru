@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ensureAnonymousSession } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
@@ -11,6 +11,11 @@ export default function HomePage() {
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [lastRoomCode, setLastRoomCode] = useState("");
+
+  useEffect(() => {
+    setLastRoomCode(localStorage.getItem("hannin:lastRoomCode") || "");
+  }, []);
 
   async function createRoom(e: FormEvent) {
     e.preventDefault();
@@ -20,6 +25,7 @@ export default function HomePage() {
       await ensureAnonymousSession();
       const { data, error } = await supabase.rpc("create_room", { p_display_name: name.trim().slice(0, 20) });
       if (error) throw error;
+      localStorage.setItem("hannin:lastRoomCode", String(data));
       router.push(`/room/${data}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "部屋を作成できませんでした。");
@@ -35,6 +41,7 @@ export default function HomePage() {
       await ensureAnonymousSession();
       const { error } = await supabase.rpc("join_room", { p_code: code, p_display_name: name.trim().slice(0, 20) });
       if (error) throw error;
+      localStorage.setItem("hannin:lastRoomCode", code);
       router.push(`/room/${code}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "参加できませんでした。");
@@ -55,6 +62,7 @@ export default function HomePage() {
             <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="例：あかり" maxLength={20} />
           </div>
           {error && <div className="message">{error}</div>}
+          {lastRoomCode && <a className="button resumeButton" href={`/room/${lastRoomCode}`}>↩️ 前回のゲームに戻る（{lastRoomCode}）</a>}
           <form className="stack" onSubmit={createRoom}>
             <button className="button" disabled={busy}>{busy ? "準備中…" : "新しい部屋を作る"}</button>
           </form>

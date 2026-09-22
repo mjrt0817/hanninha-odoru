@@ -1,4 +1,4 @@
-const APP_CACHE = "hannin-app-v3";
+const APP_CACHE = "hannin-app-v6";
 const OLD_CACHES = ["hannin-cards-v1", "hannin-cards-v2"];
 
 self.addEventListener("install", () => self.skipWaiting());

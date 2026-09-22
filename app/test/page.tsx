@@ -22,6 +22,7 @@ type Pending =
   | { kind: "rumor"; actorSeat: number; selections: Record<number, string> };
 
 type Reveal = { title: string; message: string; cards?: string[] } | null;
+type TestTrail = { fromSeat: number | null; toSeat: number; action: string };
 
 const DEFAULT_NAMES = ["プレイヤー1", "プレイヤー2", "プレイヤー3", "プレイヤー4"];
 
@@ -41,6 +42,7 @@ export default function TestPage() {
   const [pending, setPending] = useState<Pending | null>(null);
   const [reveal, setReveal] = useState<Reveal>(null);
   const [result, setResult] = useState("");
+  const [culpritTrail, setCulpritTrail] = useState<TestTrail[]>([]);
 
   function deal() {
     const hands = dealMvpHands(playerCount);
@@ -57,6 +59,8 @@ export default function TestPage() {
     setPending(null);
     setReveal(null);
     setResult("");
+    const culpritSeat = nextPlayers.findIndex((p) => p.hand.some((id) => CARD_BY_ID.get(id)?.type === "culprit"));
+    setCulpritTrail(culpritSeat >= 0 ? [{ fromSeat: null, toSeat: culpritSeat, action: "配札" }] : []);
     setMessage("第一発見者のカードをタップして事件を発表してください。");
   }
 
@@ -74,6 +78,18 @@ export default function TestPage() {
     setPhase("finished");
     setCurrentSeat(null);
     setPending(null);
+  }
+
+  function culpritSeatOf(snapshot: TestPlayer[]) {
+    return snapshot.findIndex((p) => p.hand.some((id) => CARD_BY_ID.get(id)?.type === "culprit"));
+  }
+
+  function recordCulpritMove(before: TestPlayer[], after: TestPlayer[], action: string) {
+    const fromSeat = culpritSeatOf(before);
+    const toSeat = culpritSeatOf(after);
+    if (fromSeat >= 0 && toSeat >= 0 && fromSeat !== toSeat) {
+      setCulpritTrail((prev) => [...prev, { fromSeat, toSeat, action }]);
+    }
   }
 
   function advance(nextPlayers: TestPlayer[], fromSeat: number, publicMessage: string) {
@@ -251,6 +267,7 @@ export default function TestPage() {
       if (idx === targetSeat) return { ...p, hand: [...p.hand.filter((id) => id !== targetChoice), actorChoice] };
       return p;
     });
+    recordCulpritMove(players, nextPlayers, "取り引き");
     advance(nextPlayers, actorSeat, `🔄 ${players[actorSeat].name}と${players[targetSeat].name}がカードを1枚ずつ取り引きしました。`);
   }
 
@@ -272,6 +289,7 @@ export default function TestPage() {
       const left = (seat + 1) % players.length;
       nextPlayers[left].hand.push(pending.selections[seat]);
     }
+    recordCulpritMove(players, nextPlayers, "情報操作");
     advance(nextPlayers, pending.actorSeat, "📡 情報操作：全員が左隣へカードを1枚渡しました。");
   }
 
@@ -293,6 +311,7 @@ export default function TestPage() {
       nextPlayers[right].hand = nextPlayers[right].hand.filter((id) => id !== pending.selections[chooser]);
     }
     for (const chooser of eligible) nextPlayers[chooser].hand.push(pending.selections[chooser]);
+    recordCulpritMove(players, nextPlayers, "うわさ");
     advance(nextPlayers, pending.actorSeat, "📢 うわさ：全員が右隣の人からカードを1枚取りました。");
   }
 
@@ -322,7 +341,7 @@ export default function TestPage() {
           <div>
             <Link className="topLink" href="/">← トップへ</Link>
             <h1 className="testTitle">PCテストモード</h1>
-            <p className="small">1台のPCで最大4名分を操作できます。Ver.0.4では全カード効果を試せます。</p>
+            <p className="small">1台のPCで最大4名分を操作できます。Ver.0.5では終了公開・犯人カードの軌跡・リプレイも確認できます。</p>
           </div>
           <div className="testControls">
             <label className="label">人数</label>
@@ -337,6 +356,11 @@ export default function TestPage() {
         {incident && <div className="incidentBanner">🚨 今回の事件：<strong>{incident}</strong></div>}
         {message && <div className="turnBanner">{message}</div>}
         {result && <div className="resultBanner">{result}</div>}
+        {phase === "finished" && players.length > 0 && <section className="finalSummary testFinalSummary">
+          <div className="finalSummaryHeader"><div><div className="small">PCテスト・終了公開</div><h2>🎬 エンディング</h2></div><button className="button compact replayInline" onClick={deal}>🔁 もう一度遊ぶ</button></div>
+          <div className="summaryPlayers">{players.map((p, seat) => <div className="summaryPlayer" key={seat}><div className="summaryPlayerTitle"><strong>{p.name}</strong>{p.accomplice && <span className="accompliceTag">😈 犯人側</span>}</div>{p.hand.length ? <div className="summaryHand">{p.hand.map((id) => <DigitalCard key={id} card={CARD_BY_ID.get(id)!} compact />)}</div> : <div className="small">残り手札なし</div>}</div>)}</div>
+          <div className="culpritTrail"><h3>🕵️ 犯人カードの軌跡</h3><div className="trailList">{culpritTrail.map((e, i) => <div className="trailStep" key={`${i}-${e.toSeat}`}><span className="trailNumber">{i + 1}</span><div>{e.fromSeat === null ? <span>配札 → </span> : <><strong>{players[e.fromSeat]?.name}</strong> → </>}<strong>{players[e.toSeat]?.name}</strong><div className="small">{e.action}</div></div></div>)}</div></div>
+        </section>}
         {players.length > 0 && phase === "awaiting_incident" && <div className="turnBanner">第一発見者：{firstPlayerName}</div>}
 
         {incidentEditorSeat !== null && (
