@@ -1,100 +1,54 @@
-# 犯人は踊る Family Browser Edition — Ver.0.3.1
+# 犯人は踊る Family Browser Edition Ver.0.4
 
-家族のスマホ・タブレットから**インストールなし**で参加できるブラウザ版です。PCだけで動作確認できるテストモードも追加しています。
+家族のスマホ・タブレット・PCからブラウザで参加する家庭用マルチプレイヤー版です。アプリストアからのインストールは不要です。
 
-## Ver.0.3.1で追加したもの
+## 構成
+- Next.js / Vercel
+- Supabase Free（Anonymous Auth / PostgreSQL / Realtime）
+- カード本体はHTML/CSS描画
+- 標準イラストはSVG相当のベクター描画
+- 任意のカードだけ PNG / WebP / JPG / SVG 画像へ差し替え可能
 
-- **PCテストモード** `/test`
-  - 1台のPCで3人または4人分を同時表示
-  - Supabaseを使わずローカルだけで配札テスト
-  - 各プレイヤーの手札を表示／非表示
-  - 第一発見者をタップ → 事件入力 → 次の手番へ進むところまで確認可能
-- 通常の家族プレイでも**第一発見者カードをタップ可能**
-- 事件名を入力して全員へ表示
-- 第一発見者使用後、カードを手札から除き、時計回りで次の人へ手番移動
-- カードを写真画像ではなく、HTML/CSS＋SVGで描画するデジタルカード方式へ変更
-- 実物カード写真をもとに、各カードの説明文をカード面へ常時表示
-- PCテストモードの小さいカードでも説明文を省略せず表示
-
-## 既にVer.0.1をSupabaseへ設定済みの場合
-
-Supabaseの **SQL Editor → New query** を開き、
-
-`supabase/upgrade_v0_2.sql`
-
-の中身を全文貼り付けて **Run** してください。
-
-これを実行しない場合、第一発見者をタップしたときに処理できません。
-
-## 新規セットアップの場合
-
-1. Supabase Freeプロジェクトを作成
-2. **Authentication → Sign In / Providers → Allow anonymous sign-ins** をON
+## 初回セットアップ
+1. Supabaseでプロジェクトを作成
+2. Authentication → Sign In / Providers → Allow anonymous sign-ins をON
 3. SQL Editorで `supabase/schema.sql` を全文実行
-4. Supabase上部の **Connect** から Project URL と Publishable Key を確認
-5. VercelのEnvironment Variablesへ次の2つを設定
+4. VercelにGitHubリポジトリをImport
+5. Environment Variables に以下を登録
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxxxx
 ```
 
-6. GitHubのリポジトリをVercelへImportしてDeploy
+## 既存 Ver.0.3.1 から更新
+`supabase/upgrade_v0_4.sql` を1回実行してから、Ver.0.4をGitHubへPushしてください。詳細は `UPDATE_FROM_V0.3.1.md`。
 
-## PCテストモード
+## Ver.0.4で実装済み
+- 3〜8人ルーム / QR参加
+- 第一発見者 / 事件入力
+- 一般人 / アリバイ / たくらみ
+- 少年 / 目撃者の秘密情報
+- 探偵 / いぬ / 犯人の勝敗判定
+- 取り引き / 情報操作 / うわさの複数端末同期
+- PCテストモード（3〜4人、全カード効果の確認）
+- デジタルカード一覧 `/cards`
 
-トップ画面の
+## カードに画像イラストを追加する
+画像を `public/card-art/` に置きます。
 
-**「🖥️ PCテストモード（最大4人）」**
+```ts
+illustration: {
+  kind: "image",
+  src: "/card-art/new-role.webp",
+  alt: "新しい役割のイラスト",
+  fit: "contain",
+  position: "center"
+}
+```
 
-を押してください。
+`contain` は全体表示、`cover` は枠いっぱいに表示します。標準ベクターと画像を混在できます。
 
-Vercel上なら直接 `/test` を開いても構いません。
-
-1. 3人／4人を選択
-2. 「テスト開始」
-3. 全員分の手札が同時表示
-4. 黄色枠のプレイヤーが現在の手番
-5. 第一発見者カードをタップ
-6. 事件を入力して開始
-7. 次のプレイヤーへ手番が移動
-
-このモードはSupabaseを使用しないため、PCだけでUIやカード処理を素早く確認できます。
-
-## 通常プレイの確認方法
-
-1. 1台目で「新しい部屋を作る」
-2. QRコードから他端末で参加
-3. 3人以上でゲーム開始
-4. 第一発見者を持つ端末に黄色枠・案内が表示される
-5. 第一発見者カードをタップ
-6. 事件を入力
-7. 全端末に事件が表示され、次の人へ手番が移る
-
-## デジタルカードについて
-
-カード本体は画像ではなく、カード定義データ・HTML/CSS・SVGイラストから描画します。
-カード名・ルール説明文は `lib/cards.ts` で管理しているため、今後カードを追加するときも同じテンプレートを再利用できます。
-
-説明文は実物カードの写真をもとに登録しており、通常表示だけでなくPCテストモードの compact 表示でもカード面に表示します。
-
-## 現在の実装範囲
-
-第一発見者までは実際にプレイできます。第一発見者の次のプレイヤーからカードをクリックすることはできますが、各カード固有の効果処理は次版で実装します。
-
-次の実装候補：
-
-- 一般人
-- 目撃者
-- 取り引き
-- 情報操作
-- うわさ
-- 少年
-- 探偵 / アリバイ
-- いぬ
-- 犯人 / たくらみ
-- 勝敗判定・ゲーム終了演出
-
-
-## Ver.0.3.1 デジタルカード
-写真カード画像を廃止し、カード定義・共通HTML/CSS・SVGイラストで描画します。`/cards` で一覧確認できます。
+## テストURL
+- `/test` : PCテストモード
+- `/cards` : カード一覧

@@ -14,6 +14,8 @@ export function DigitalCard({ card, compact = false, className = "" }: Props) {
     "--card-accent-2": card.accent2,
   } as CSSProperties;
 
+  const illustration = card.illustration;
+
   return (
     <div className={`digitalCard ${compact ? "compact" : ""} ${className}`} style={style}>
       <div className="digitalCardGlow" />
@@ -23,7 +25,18 @@ export function DigitalCard({ card, compact = false, className = "" }: Props) {
       </div>
       <div className="digitalCardArt">
         <div className="digitalCardArtHalo" />
-        <RoleIllustration type={card.type} />
+        {illustration.kind === "image" ? (
+          // public/ 配下の画像は /card-art/xxx.webp のようなURLで指定できます。
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            className="cardArtImage"
+            src={illustration.src}
+            alt={illustration.alt ?? `${card.name}のイラスト`}
+            style={{ objectFit: illustration.fit ?? "contain", objectPosition: illustration.position ?? "center" }}
+          />
+        ) : (
+          <RoleIllustration type={illustration.key ?? card.type} />
+        )}
       </div>
       <div className="digitalCardRule">{card.ruleText}</div>
       <div className="digitalCardFooter">

@@ -12,6 +12,10 @@ export type CardType =
   | "info"
   | "trade";
 
+export type CardIllustration =
+  | { kind: "builtin"; key?: CardType }
+  | { kind: "image"; src: string; alt?: string; fit?: "contain" | "cover"; position?: string };
+
 export type CardDef = {
   id: string;
   type: CardType;
@@ -21,9 +25,12 @@ export type CardDef = {
   accent: string;
   accent2: string;
   symbol: string;
+  illustration: CardIllustration;
 };
 
-const THEMES: Record<CardType, Pick<CardDef, "accent" | "accent2" | "symbol">> = {
+type Theme = Pick<CardDef, "accent" | "accent2" | "symbol">;
+
+const THEMES: Record<CardType, Theme> = {
   culprit: { accent: "#ef4444", accent2: "#7f1d1d", symbol: "!" },
   "first-discoverer": { accent: "#f59e0b", accent2: "#92400e", symbol: "!" },
   dog: { accent: "#14b8a6", accent2: "#115e59", symbol: "🐾" },
@@ -104,12 +111,25 @@ const defs: Array<[string, CardType, string]> = [
   ...Array.from({ length: 5 }, (_, i) => [`trade-${String(i + 1).padStart(2, "0")}`, "trade", "取り引き"] as [string, CardType, string]),
 ];
 
+// カード単位で画像へ差し替えたいときはここに追加します。
+// public/card-art/ に画像を置けば、既存のベクターカードと混在できます。
+const ILLUSTRATION_OVERRIDES: Partial<Record<string, CardIllustration>> = {
+  // "detective-01": {
+  //   kind: "image",
+  //   src: "/card-art/detective-family.webp",
+  //   alt: "探偵のイラスト",
+  //   fit: "contain",
+  //   position: "center",
+  // },
+};
+
 export const CARDS: CardDef[] = defs.map(([id, type, name]) => ({
   id,
   type,
   name,
   ...RULES[type],
   ...THEMES[type],
+  illustration: ILLUSTRATION_OVERRIDES[id] ?? { kind: "builtin", key: type },
 }));
 
 export const CARD_BY_ID = new Map(CARDS.map((card) => [card.id, card]));

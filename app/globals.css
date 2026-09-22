@@ -311,3 +311,38 @@ h1 { margin:8px 0 4px; font-size:clamp(32px, 9vw, 56px); letter-spacing:.04em; }
 @media (max-width:980px) { .galleryGrid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
 @media (max-width:720px) { .galleryHeader { align-items:stretch; flex-direction:column; } .galleryTestLink { width:100%; } .galleryGrid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; } }
 @media (max-width:480px) { .galleryGrid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } }
+
+/* Ver.0.4 - optional image illustrations */
+.cardArtImage {
+  position:relative;
+  z-index:1;
+  width:88%;
+  height:88%;
+  display:block;
+  border-radius:10px;
+  filter:drop-shadow(0 5px 0 rgba(255,255,255,.5));
+}
+.digitalCard.compact .cardArtImage { width:82%; height:82%; border-radius:6px; }
+
+/* Ver.0.4 - game action UI */
+.actionPanel { margin:14px 0 18px; padding:18px; border:1px solid rgba(94,234,212,.3); border-radius:18px; background:#222735; box-shadow:0 14px 34px rgba(0,0,0,.18); }
+.actionPanel h2 { margin:0 0 10px; }
+.targetButtons { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:9px; margin-bottom:12px; }
+.selectionRow { padding:12px 0; border-top:1px solid var(--line); }
+.selectionRow:first-of-type { border-top:0; }
+.choiceCards { display:grid; grid-template-columns:repeat(4,minmax(0,110px)); gap:8px; margin-top:9px; }
+.choiceCards button, .backChoices button { position:relative; border:2px solid transparent; border-radius:10px; padding:0; background:transparent; color:var(--text); min-width:0; }
+.choiceCards button.selectedChoice, .backChoices button.selectedChoice { border-color:var(--accent); box-shadow:0 0 0 3px rgba(255,211,77,.14); transform:translateY(-2px); }
+.backChoices { display:grid; grid-template-columns:repeat(auto-fit,minmax(72px,100px)); gap:9px; margin-top:10px; }
+.backChoices span { display:block; margin-top:5px; text-align:center; font-size:12px; font-weight:900; }
+.revealCards { display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,120px)); gap:10px; margin:12px 0 16px; }
+.resultBanner { margin:14px 0; padding:18px; border-radius:17px; background:linear-gradient(135deg,rgba(110,231,165,.2),rgba(255,211,77,.2)); border:1px solid rgba(110,231,165,.35); font-weight:950; font-size:18px; }
+.cardLock { position:absolute; left:5px; right:5px; bottom:5px; z-index:9; padding:4px; border-radius:7px; background:rgba(15,23,42,.88); color:#fff; font-size:8px !important; text-align:center; }
+@media (max-width:720px) { .choiceCards { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.publicEvent { padding:11px 14px; border-radius:13px; background:rgba(96,165,250,.1); border:1px solid rgba(96,165,250,.24); color:#dbeafe; line-height:1.5; }
+.liveActionPanel { margin:0; }
+.liveChoiceCards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+.liveChoiceCards button { border:2px solid transparent; border-radius:12px; padding:0; background:transparent; min-width:0; }
+.liveChoiceCards button:hover { border-color:var(--accent); }
+@media (max-width:520px) { .liveChoiceCards { grid-template-columns:repeat(2,minmax(0,1fr)); } }
