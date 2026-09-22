@@ -115,7 +115,7 @@ h1 { margin:8px 0 4px; font-size:clamp(32px, 9vw, 56px); letter-spacing:.04em; }
   aspect-ratio:5/7;
   overflow:hidden;
   display:grid;
-  grid-template-rows:auto 1fr auto auto;
+  grid-template-rows:auto minmax(0,1fr) auto auto;
   border-radius:18px;
   background:
     radial-gradient(circle at 78% 20%, color-mix(in srgb, var(--card-accent) 28%, transparent), transparent 34%),
@@ -226,6 +226,7 @@ h1 { margin:8px 0 4px; font-size:clamp(32px, 9vw, 56px); letter-spacing:.04em; }
   font-size:clamp(10px, 1.45vw, 13px);
   line-height:1.48;
   font-weight:750;
+  white-space:pre-line;
 }
 .digitalCardFooter {
   display:flex;
@@ -239,16 +240,17 @@ h1 { margin:8px 0 4px; font-size:clamp(32px, 9vw, 56px); letter-spacing:.04em; }
 }
 .digitalCard.compact {
   border-radius:10px;
-  grid-template-rows:auto 1fr auto;
+  grid-template-rows:auto minmax(0,1fr) auto auto;
   box-shadow:inset 0 0 0 3px rgba(255,255,255,.62), inset 0 0 0 5px color-mix(in srgb, var(--card-accent) 58%, transparent);
 }
 .digitalCard.compact::after { inset:6px; border-radius:7px; }
 .digitalCard.compact .digitalCardTop { grid-template-columns:22px 1fr; gap:5px; padding:8px 8px 4px; }
 .digitalCard.compact .digitalCardSymbol { width:22px; height:22px; font-size:11px; }
 .digitalCard.compact .digitalCardTitle { font-size:clamp(9px, 1.1vw, 13px); }
-.digitalCard.compact .digitalCardArt { margin:0 8px 6px; border-radius:8px; }
-.digitalCard.compact .roleIllustration { width:83%; }
-.digitalCard.compact .digitalCardFooter { padding:1px 9px 8px; font-size:5px; }
+.digitalCard.compact .digitalCardArt { margin:0 8px 4px; border-radius:8px; min-height:0; }
+.digitalCard.compact .roleIllustration { width:74%; max-height:74%; }
+.digitalCard.compact .digitalCardRule { margin:4px 8px 2px; min-height:0; padding:5px 6px; border-radius:7px; border-left-width:3px; font-size:clamp(6.5px, .72vw, 9px); line-height:1.28; font-weight:760; }
+.digitalCard.compact .digitalCardFooter { padding:1px 9px 7px; font-size:5px; }
 .digitalCard.compact .digitalCardFooter span:first-child { display:none; }
 
 .digitalCardButton { position:relative; overflow:visible; background:transparent; border-radius:18px; }

@@ -25,7 +25,7 @@ export function DigitalCard({ card, compact = false, className = "" }: Props) {
         <div className="digitalCardArtHalo" />
         <RoleIllustration type={card.type} />
       </div>
-      {!compact && <div className="digitalCardRule">{card.shortEffect}</div>}
+      <div className="digitalCardRule">{card.ruleText}</div>
       <div className="digitalCardFooter">
         <span>FAMILY EDITION</span>
         <span>{card.name}</span>
