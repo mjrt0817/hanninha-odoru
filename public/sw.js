@@ -1,7 +1,13 @@
-const CARD_CACHE = "hannin-cards-v1";
+const CARD_CACHE = "hannin-cards-v2";
+const OLD_CARD_CACHES = ["hannin-cards-v1"];
 
 self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    await Promise.all(OLD_CARD_CACHES.map((name) => caches.delete(name)));
+    await self.clients.claim();
+  })());
+});
 
 self.addEventListener("fetch", (event) => {
   const req = event.request;

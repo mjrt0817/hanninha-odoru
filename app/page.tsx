@@ -66,6 +66,8 @@ export default function HomePage() {
             </div>
             <button className="button secondary" disabled={busy}>家族の部屋に参加</button>
           </form>
+          <div className="divider" />
+          <a className="button testModeButton" href="/test">🖥️ PCテストモード（最大4人）</a>
           <p className="hint">アプリのインストールは不要です。QRコードからブラウザで参加できます。端末内部では匿名セッションだけを作り、他の人の手札を直接読めないようにします。</p>
         </div>
       </div>
