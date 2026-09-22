@@ -68,6 +68,7 @@ export default function HomePage() {
           </form>
           <div className="divider" />
           <a className="button testModeButton" href="/test">🖥️ PCテストモード（最大4人）</a>
+          <a className="button secondary" href="/cards">🃏 デジタルカード一覧を見る</a>
           <p className="hint">アプリのインストールは不要です。QRコードからブラウザで参加できます。端末内部では匿名セッションだけを作り、他の人の手札を直接読めないようにします。</p>
         </div>
       </div>

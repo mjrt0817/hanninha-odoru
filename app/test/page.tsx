@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CARD_BY_ID } from "@/lib/cards";
 import { dealMvpHands } from "@/lib/deck";
+import { DigitalCard, DigitalCardBack } from "@/components/cards/DigitalCard";
 
 type TestPlayer = {
   name: string;
@@ -123,9 +124,8 @@ export default function TestPage() {
                       if (!def) return null;
                       const canTap = (phase === "awaiting_incident" && isCurrent && cardId === "first-discoverer-01") || (phase === "turn" && isCurrent);
                       return (
-                        <button className={`testCard ${canTap ? "playable" : ""}`} key={cardId} onClick={() => tapCard(seat, cardId)}>
-                          {player.hidden ? <div className="cardBack">?</div> : <img src={def.image} alt={def.name} />}
-                          {!player.hidden && <span>{def.name}</span>}
+                        <button className={`testCard digitalTestCard ${canTap ? "playable" : ""}`} key={cardId} onClick={() => tapCard(seat, cardId)}>
+                          {player.hidden ? <DigitalCardBack compact /> : <DigitalCard card={def} compact />}
                         </button>
                       );
                     })}

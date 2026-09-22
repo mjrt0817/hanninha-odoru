@@ -5,6 +5,7 @@ import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { ensureAnonymousSession } from "@/lib/auth";
 import { CARD_BY_ID } from "@/lib/cards";
+import { DigitalCard } from "@/components/cards/DigitalCard";
 import { supabase } from "@/lib/supabase";
 
 type Room = { id: string; code: string; host_user_id: string; status: "waiting" | "playing" | "finished"; game_id: string | null };
@@ -151,12 +152,12 @@ export function RoomClient({ code }: { code: string }) {
         <div><h2 className="sectionTitle">あなたの手札</h2><div className="cards">{cards.map(({row,def}) => {
           if (!def) return null;
           const playable = isMyTurn && ((awaitingIncident && def.id === "first-discoverer-01") || !awaitingIncident);
-          return <button className={`card cardButton ${playable ? "playable" : ""}`} key={row.id} onClick={() => onCardClick(def.id)} disabled={!playable}>
-            <img src={def.image} alt={def.name} />
-            <div className="cardMeta"><div className="cardName">{def.name}</div><p className="cardText">{def.shortEffect}</p>{playable && awaitingIncident && <div className="tapHint">タップして事件を発表</div>}</div>
+          return <button className={`card cardButton digitalCardButton ${playable ? "playable" : ""}`} key={row.id} onClick={() => onCardClick(def.id)} disabled={!playable}>
+            <DigitalCard card={def} />
+            {playable && awaitingIncident && <div className="tapHint overlayHint">タップして事件を発表</div>}
           </button>;
         })}</div></div>
-        <div className="hint">Ver.0.2では第一発見者を実際に使用し、事件発表後に次のプレイヤーへ手番が進みます。他カードの効果は順次追加します。</div>
+        <div className="hint">Ver.0.3ではカードをデジタル描画へ切り替えています。第一発見者を使用すると、事件発表後に次のプレイヤーへ手番が進みます。他カードの効果は順次追加します。</div>
       </>}
     </div>
 
