@@ -1,0 +1,9 @@
+{
+  "name": "犯人は踊る Family",
+  "short_name": "犯人は踊る",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#17151f",
+  "theme_color": "#17151f",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
